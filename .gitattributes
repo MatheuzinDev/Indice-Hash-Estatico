@@ -1,0 +1,12 @@
+# Normaliza finais de linha no repositório (LF), deixando o Git decidir na cópia local
+* text=auto
+
+# Base de dados: LF também na cópia de trabalho.
+# Com CRLF, cada registro lido viria com \r no fim e as chaves não bateriam.
+data/words.txt text eol=lf
+
+# Fontes Python sempre com LF
+*.py text eol=lf
+
+# Binários: nunca converter
+*.pdf binary
