@@ -147,6 +147,40 @@ usuário recebe apenas `strip()`.
 
 ---
 
+## 2026-08-19 — Commit inicial e publicação no GitHub
+
+*Autorizado explicitamente pelo usuário.*
+
+### Identidade do git configurada
+`user.name` e `user.email` definidos **localmente** (só neste repositório, sem `--global`):
+`Matheus Diógenes` / `matheusdiogenesdev@gmail.com`.
+
+### Criado `.gitattributes`
+Adicionado antes do commit, porque o Git avisou que converteria `data/words.txt` para CRLF. Com
+CRLF, cada registro lido viria com `\r` no fim e as chaves não bateriam na busca. O arquivo está
+fixado em `eol=lf`, assim como os fontes `.py`; o PDF marcado como binário.
+
+### Commit `d8fdb2c` — "Estrutura inicial do projeto e documentacao"
+13 arquivos, 467.972 inserções. Toda a estrutura inicial e a documentação.
+
+### Publicado em `https://github.com/MatheuzinDev/Indice-Hash-Estatico`
+Branch `main` rastreando `origin/main`.
+
+Histórico da publicação: o remote apontava inicialmente para
+`matheus-html/IndiceHashEstatico` (repositório de um colega). O push falhou com **403 — permission
+denied to MatheuzinDev**, mesmo após o aceite do convite de colaborador. O usuário optou por criar o
+repositório na própria conta, e o push passou sem intercorrência.
+
+**Pendente:** definir com a equipe qual repositório é o oficial da entrega. Se for o do colega, basta
+adicionar o segundo remote — o histórico já está pronto para ser empurrado para lá.
+
+### Desvios em relação ao script colado pelo usuário
+- **Não** executado `echo "# Indice-Hash-Estatico" >> README.md`: o `README.md` já tem título e
+  conteúdo completos, e o comando acrescentaria um cabeçalho solto no rodapé.
+- `git add -A` em vez de `git add README.md`, conforme o pedido de commitar toda a estrutura inicial.
+
+---
+
 ## Arquivos não modificados
 
 `26.2 - Projeto 1 - Índice HASH.pdf` e `especificacao_indice_hash.md` tiveram apenas a localização
