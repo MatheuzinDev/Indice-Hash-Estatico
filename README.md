@@ -97,4 +97,4 @@ e a explicação do código na apresentação organizada.
 | Matheus Diógenes | 2310277 |
 | Guilherme Garcia | 2310255 |
 | Matheus Holanda | 2320306 |
-| Thais Moreira | 2320471 |
+| Taís Moreira | 2320471 |
