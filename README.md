@@ -40,7 +40,7 @@ pip install -r requirements.txt
 
 ### Base de dados
 
-O arquivo `data/words.txt` (466.550 registros) **já vem no repositório** — não é preciso baixar nada.
+O arquivo `data/words.txt` (466.550 registros) **já vem no repositório**.
 Detalhes sobre o conteúdo e a sensibilidade a maiúsculas na busca em
 [`data/README.md`](data/README.md).
 
