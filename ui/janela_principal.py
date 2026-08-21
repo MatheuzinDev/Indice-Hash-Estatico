@@ -1,0 +1,45 @@
+from PySide6.QtWidgets import QLabel, QMainWindow, QVBoxLayout, QWidget
+
+from ui.paineis import PainelConfiguracao
+
+COR_ERRO = "#b00020"
+
+
+class JanelaPrincipal(QMainWindow):
+
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle("Índice Hash Estático")
+        self.resize(700, 200)
+
+        self.palavras: list[str] = []
+
+        self.painel_config = PainelConfiguracao()
+        self.painel_config.arquivo_carregado.connect(self._ao_carregar_arquivo)
+        self.painel_config.falha_carregamento.connect(self._ao_falhar_carregamento)
+
+        self._total = QLabel("Palavras carregadas: —")
+        self._status = QLabel("Selecione um arquivo de palavras para começar.")
+        self._status.setWordWrap(True)
+
+        central = QWidget()
+        layout = QVBoxLayout(central)
+        layout.addWidget(self.painel_config)
+        layout.addWidget(self._total)
+        layout.addStretch()
+        layout.addWidget(self._status)
+        self.setCentralWidget(central)
+
+    def _ao_carregar_arquivo(self, palavras: list[str]) -> None:
+        self.palavras = palavras
+        total = f"{len(palavras):,}".replace(",", ".")
+        self._total.setText(f"Palavras carregadas: {total}")
+        self._status.setText("Arquivo carregado.")
+        self._status.setStyleSheet("")
+
+    def _ao_falhar_carregamento(self, mensagem: str) -> None:
+        self.palavras = []
+        self._total.setText("Palavras carregadas: —")
+        self._status.setText(mensagem)
+        self._status.setStyleSheet(f"color: {COR_ERRO};")
