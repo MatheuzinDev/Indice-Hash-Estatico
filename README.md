@@ -69,7 +69,6 @@ projeto-banco-dados-av1/
 │   ├── janela_principal.py
 │   ├── paineis.py
 │   └── componentes.py
-├── scripts/validar_nucleo.py    # validação do núcleo por linha de comando
 └── data/words.txt               # base de dados (466.550 registros)
 ```
 
