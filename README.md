@@ -60,6 +60,7 @@ python main.py
 projeto-banco-dados-av1/
 ├── main.py                      # ponto de entrada
 ├── core/                        # lógica pura — não importa PySide6
+│   ├── erros.py                 # exceções e mensagens de erro
 │   ├── funcao_hash.py           # função hash FNV-1a e cálculo de NB
 │   ├── armazenamento.py         # tabela, paginação e contador de acessos
 │   ├── indice.py                # Bucket, overflow e construção do índice
@@ -69,7 +70,6 @@ projeto-banco-dados-av1/
 │   ├── janela_principal.py
 │   ├── paineis.py
 │   └── componentes.py
-├── scripts/validar_nucleo.py    # validação do núcleo por linha de comando
 └── data/words.txt               # base de dados (466.550 registros)
 ```
 
