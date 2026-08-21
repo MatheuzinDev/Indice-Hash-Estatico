@@ -60,6 +60,7 @@ python main.py
 projeto-banco-dados-av1/
 ├── main.py                      # ponto de entrada
 ├── core/                        # lógica pura — não importa PySide6
+│   ├── erros.py                 # exceções e mensagens de erro
 │   ├── funcao_hash.py           # função hash FNV-1a e cálculo de NB
 │   ├── armazenamento.py         # tabela, paginação e contador de acessos
 │   ├── indice.py                # Bucket, overflow e construção do índice
