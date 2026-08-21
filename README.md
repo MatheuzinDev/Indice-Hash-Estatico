@@ -60,33 +60,41 @@ python main.py
 projeto-banco-dados-av1/
 ├── main.py                      # ponto de entrada
 ├── core/                        # lógica pura — não importa PySide6
-│   ├── hashing.py               # função hash FNV-1a e cálculo de NB
-│   ├── storage.py               # tabela, paginação e contador de acessos
-│   ├── index.py                 # Bucket, overflow e construção do índice
-│   ├── search.py                # busca indexada e table scan
-│   └── metrics.py               # estatísticas e comparativos
+│   ├── funcao_hash.py           # função hash FNV-1a e cálculo de NB
+│   ├── armazenamento.py         # tabela, paginação e contador de acessos
+│   ├── indice.py                # Bucket, overflow e construção do índice
+│   ├── busca.py                 # busca indexada e table scan
+│   └── metricas.py              # estatísticas e comparativos
 ├── ui/                          # interface gráfica
-│   ├── main_window.py
-│   ├── panels.py
-│   └── widgets.py
-├── scripts/                     # validação por linha de comando
-├── data/words.txt               # base de dados (466.550 registros)
-└── docs/                        # requisitos e planejamento
+│   ├── janela_principal.py
+│   ├── paineis.py
+│   └── componentes.py
+├── scripts/validar_nucleo.py    # validação do núcleo por linha de comando
+└── data/words.txt               # base de dados (466.550 registros)
 ```
 
 **Regra de separação:** nada em `core/` importa PySide6. Isso mantém o núcleo testável por script
 e a explicação do código na apresentação organizada.
 
+**Idioma do código:** todo o código é escrito em português — módulos, classes, funções, variáveis e
+comentários. As exceções são os termos do glossário do enunciado (`bucket`, `overflow`, `hash`,
+`table_scan`), as siglas oficiais (`nr`, `nb`, `fr`, `tp`) e a API do PySide6. O glossário completo de
+nomes está no plano de implementação da equipe.
+
 ---
 
 ## Documentação
 
+A documentação de planejamento fica na pasta `docs/`, que **não é versionada** — é material interno da
+equipe e circula fora do repositório:
+
 | Documento | Conteúdo |
 |---|---|
-| [`docs/26.2 - Projeto 1 - Índice HASH.pdf`](docs/) | Enunciado oficial com as histórias de usuário |
-| [`docs/especificacao_indice_hash.md`](docs/especificacao_indice_hash.md) | Decisões técnicas da equipe |
-| [`docs/PLANO_IMPLEMENTACAO.md`](docs/PLANO_IMPLEMENTACAO.md) | Plano de implementação por história de usuário |
-| [`docs/REGISTRO_DE_ALTERACOES.md`](docs/REGISTRO_DE_ALTERACOES.md) | Histórico de alterações |
+| `docs/26.2 - Projeto 1 - Índice HASH.pdf` | Enunciado oficial com as histórias de usuário |
+| `docs/especificacao_indice_hash.md` | Decisões técnicas da equipe |
+| `docs/PLANO_IMPLEMENTACAO.md` | Plano geral por história de usuário, com as convenções de nomenclatura |
+| `docs/plans/` | Plano detalhado de cada história, escrito sob demanda |
+| `docs/REGISTRO_DE_ALTERACOES.md` | Histórico de alterações |
 
 ---
 

@@ -10,6 +10,10 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 
+# Documentacao interna da equipe — nao vai para o GitHub.
+# Os arquivos continuam no disco de cada integrante.
+docs/
+
 # Base de dados: data/words.txt É versionado (ver data/README.md).
 # Outros TXT que a equipe deixar em data/ ficam de fora.
 data/*.txt
