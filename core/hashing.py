@@ -17,7 +17,6 @@ CA10: O sistema impede NB <= NR/FR.
 class IndexHashStatic:
     def __init__(self, data: list[str]):
         self.NR = len(data)
-        # O __init__ recebe o valor validado pelos métodos
         self.FR = self._validate_FR(int(self.NR * 0.50))
         self.NB = self._validate_NB((self.NR // self.FR) + 1)
         self.SIZE = 0
@@ -25,12 +24,13 @@ class IndexHashStatic:
         print(f"Sistema inicializado: Foram criados {self.NB} buckets (NB) com capacidade {self.FR} (FR).")
 
     def _validate_FR(self, num: int):
-        return num or 1 # Apenas retorna o valor validado
+        return num or 1
 
     def _validate_NB(self, num: int):
         if num <= self.NR / self.FR:
             raise ValueError(f"Erro na regra de negócio: NB ({num}) deve ser maior que NR/FR ({self.NR/self.FR})")
-        return num # Apenas retorna o valor validado
+        return num
+
     def _init_bucket(self, NB: int, FR: int, data: list[str]):
         bucket = self._dinamic_bucket(NB, FR)
         bucket = self._population_bucket(bucket, data)
