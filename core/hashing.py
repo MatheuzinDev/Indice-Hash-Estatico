@@ -5,8 +5,7 @@ class IndexHashStatic:
         self.NR = len(data) + 1
         self.FR = self._validate_FR(20)
         self.COLISION = 0
-        ocupacao_alvo = 0.70
-        self.NB = self._validate_NB(math.ceil(self.NR / (self.FR * ocupacao_alvo)))
+        self.NB = self._validate_NB(math.ceil(self.NR / (self.FR * 0.70)))
         self.bucket = self._init_bucket(self.NB, self.FR, data)
         print(f"Sistema inicializado: Foram criados {self.NB} buckets (NB) com capacidade {self.FR} (FR).")
         print(f"Total de palavras armazenadas: {self.NR-1}. Total de colisões: {self.COLISION}.")
