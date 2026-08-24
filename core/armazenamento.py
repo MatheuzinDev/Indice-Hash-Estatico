@@ -1,3 +1,4 @@
+import math
 from pathlib import Path
 
 from core.erros import (
@@ -41,3 +42,17 @@ def validar_tamanho_pagina(texto: str) -> int:
         raise TamanhoPaginaInvalido(tamanho)
 
     return tamanho
+
+
+class Tabela:
+    def __init__(self, palavras: list[str], tamanho_pagina: int):
+        self.palavras = palavras
+        self.tamanho_pagina = tamanho_pagina
+
+    @property
+    def qtd_paginas(self) -> int:
+        return math.ceil(len(self.palavras) / self.tamanho_pagina)
+
+    def ler_pagina(self, num_pagina: int) -> list[str]:
+        inicio = num_pagina * self.tamanho_pagina
+        return self.palavras[inicio : inicio + self.tamanho_pagina]
