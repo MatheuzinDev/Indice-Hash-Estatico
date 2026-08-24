@@ -1,6 +1,12 @@
 from pathlib import Path
 
-from core.erros import ArquivoIlegivel, ArquivoVazio
+from core.erros import (
+    ArquivoIlegivel,
+    ArquivoVazio,
+    TamanhoPaginaInvalido,
+    TamanhoPaginaNaoNumerico,
+    TamanhoPaginaVazio,
+)
 
 def carregar_palavras(caminho: str | Path) -> list[str]:
     nome = Path(caminho).name
@@ -19,3 +25,19 @@ def carregar_palavras(caminho: str | Path) -> list[str]:
         raise ArquivoVazio(nome)
 
     return palavras
+
+
+def validar_tamanho_pagina(texto: str) -> int:
+    texto = texto.strip()
+
+    if not texto:
+        raise TamanhoPaginaVazio()
+
+    if not texto.lstrip("-").isdigit():
+        raise TamanhoPaginaNaoNumerico(texto)
+
+    tamanho = int(texto)
+    if tamanho <= 0:
+        raise TamanhoPaginaInvalido(tamanho)
+
+    return tamanho
