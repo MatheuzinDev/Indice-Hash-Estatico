@@ -14,10 +14,15 @@ class JanelaPrincipal(QMainWindow):
         self.resize(700, 200)
 
         self.palavras: list[str] = []
+        self.tamanho_pagina: int | None = None
 
         self.painel_config = PainelConfiguracao()
         self.painel_config.arquivo_carregado.connect(self._ao_carregar_arquivo)
         self.painel_config.falha_carregamento.connect(self._ao_falhar_carregamento)
+        self.painel_config.tamanho_pagina_definido.connect(self._ao_definir_tamanho_pagina)
+        self.painel_config.tamanho_pagina_invalido.connect(self._ao_invalidar_tamanho_pagina)
+
+        self.tamanho_pagina = self.painel_config.tamanho_pagina()
 
         self._total = QLabel("Palavras carregadas: —")
         self._status = QLabel("Selecione um arquivo de palavras para começar.")
@@ -41,5 +46,15 @@ class JanelaPrincipal(QMainWindow):
     def _ao_falhar_carregamento(self, mensagem: str) -> None:
         self.palavras = []
         self._total.setText("Palavras carregadas: —")
+        self._status.setText(mensagem)
+        self._status.setStyleSheet(f"color: {COR_ERRO};")
+
+    def _ao_definir_tamanho_pagina(self, tamanho: int) -> None:
+        self.tamanho_pagina = tamanho
+        self._status.setText(f"Tamanho da página: {tamanho} registros.")
+        self._status.setStyleSheet("")
+
+    def _ao_invalidar_tamanho_pagina(self, mensagem: str) -> None:
+        self.tamanho_pagina = None
         self._status.setText(mensagem)
         self._status.setStyleSheet(f"color: {COR_ERRO};")
