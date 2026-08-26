@@ -10,6 +10,13 @@ class IndexHashStatic:
         self.NB = self._validate_NB(math.ceil(self.NR / (self.FR * 0.70)))
         self.bucket = self._dinamic_bucket(self.NB, self.FR)
         self.next_free_pos = [0] * self.NB
+
+
+        self.overflow: list[list[list]] = [[] for _ in range(self.NB)]
+        self.total_colisoes = 0
+        self.total_overflow = 0
+        self.buckets_em_overflow: set[int] = set()
+
         self._build_index_from_pages(datas, datas_per_page)
         end_time = time.time()
 
@@ -31,50 +38,44 @@ class IndexHashStatic:
 
     def _build_index_from_pages(self, datas: list[str], datas_per_page: int):
         total_pages = math.ceil(self.NR / datas_per_page)
-        hash_func = self.hash
-        fr = self.FR
-        
+
         for page_id in range(total_pages):
             start_idx = page_id * datas_per_page
             end_idx = start_idx + datas_per_page
             page_records = datas[start_idx : end_idx]
 
             for data in page_records:
-                key = hash_func(data)
-                pos = self.next_free_pos[key]
-
-                if pos < fr:
-                    self.bucket[key][pos][0] = data
-                    self.bucket[key][pos][1] = page_id
-                    self.next_free_pos[key] += 1 
-                    self.SIZE += 1
-                else:
-                    print(f"Alerta: Bucket {key} lotou na palavra '{data}'.")
+                self.insert(data, page_id)
 
     def insert(self, value: str, page_id: int):
-        key = self.hash(value)
+        key = self.hash(value) 
+        bucket_pos = self.next_free_pos[key] 
 
-        for bucket_pos in range(self.FR):
-            if self.bucket[key][bucket_pos][0] is None: 
-                self.bucket[key][bucket_pos][0] = value
-                self.bucket[key][bucket_pos][1] = page_id
-                self.SIZE += 1
-                return True
-                
-        print(f"Colisão máxima atingida! O bucket {key} está cheio.")
-        return False
+        if bucket_pos < self.FR: 
+            self.bucket[key][bucket_pos][0] = value 
+            self.bucket[key][bucket_pos][1] = page_id 
+            self.next_free_pos[key] += 1 
+            self.SIZE += 1 
+            return True 
+
+
+        self.overflow[key].append([value, page_id])
+        self.total_colisoes += 1
+        self.total_overflow += 1 
+        self.buckets_em_overflow.add(key) 
+        return True 
 
     def search(self, value: str):
         key = self.hash(value)
-        
-        for bucket_pos in range(self.FR):
-            slot_value = self.bucket[key][bucket_pos][0]
-            
-            if slot_value == value:
-                return self.bucket[key][bucket_pos] 
-            if slot_value is None:
-                return None 
-                
+
+        for bucket_pos in range(self.next_free_pos[key]):
+            if self.bucket[key][bucket_pos][0] == value:
+                return self.bucket[key][bucket_pos]
+
+        for entrada in self.overflow[key]:
+            if entrada[0] == value:
+                return entrada
+
         return None
 
     def hash(self, value: str):
