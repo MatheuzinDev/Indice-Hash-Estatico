@@ -40,9 +40,7 @@ class IndiceHashEstatico:
         bucket = [None] * quantidade_buckets
 
         for indice in range(quantidade_buckets):
-            bucket[indice] = [
-                [None, -1] for _ in range(capacidade)
-            ]
+            bucket[indice] = [[None, -1] for _ in range(capacidade)]
 
         return bucket
 
@@ -53,7 +51,6 @@ class IndiceHashEstatico:
             registros_pagina = dados.ler_pagina(numero_pagina)
 
             for registro in registros_pagina:
-                print(registro)
                 self.inserir(registro, numero_pagina)
 
     def inserir(self, valor: str, identificador_pagina: int):
@@ -71,7 +68,6 @@ class IndiceHashEstatico:
         self.total_colisoes += 1
         self.total_overflow += 1
         self.buckets_em_overflow.add(chave)
-
         return True
 
     def buscar(self, valor: str):
