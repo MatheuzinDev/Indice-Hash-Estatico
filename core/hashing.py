@@ -1,85 +1,96 @@
 import math
 import time
+from core.armazenamento import Tabela
 
-class IndexHashStatic:
-    def __init__(self, datas: list[str], datas_per_page: int = 100):
-        start_time = time.time()
-        self.NR = len(datas)
-        self.SIZE = 0
-        self.FR = self._validate_FR(20)
-        self.NB = self._validate_NB(math.ceil(self.NR / (self.FR * 0.70)))
-        self.bucket = self._dinamic_bucket(self.NB, self.FR)
-        self.next_free_pos = [0] * self.NB
+class IndiceHashEstatico:
+    def __init__(self, dados: Tabela):
+        tempo_inicial = time.time()
 
+        self.NR = len(dados.palavras)
+        self.TAMANHO = 0
+        self.FR = self._validar_frequencia_registros(20)
+        self.NB = self._validar_numero_buckets(
+            math.ceil(self.NR / (self.FR * 0.70))
+        )
+
+        self.bucket = self._criar_bucket_dinamico(self.NB, self.FR)
+        self.proxima_posicao_livre = [0] * self.NB
 
         self.overflow: list[list[list]] = [[] for _ in range(self.NB)]
         self.total_colisoes = 0
         self.total_overflow = 0
         self.buckets_em_overflow: set[int] = set()
 
-        self._build_index_from_pages(datas, datas_per_page)
-        end_time = time.time()
+        self._construir_indice_por_paginas(dados)
 
-        print(f"Sistema inicializado: {self.NB} buckets (NB), capacidade {self.FR} (FR).")
-        print(f"Tempo de construção do índice: {(end_time - start_time):.4f} segundos")
+        tempo_final = time.time()
 
-    def _validate_FR(self, num: int):
-        return num or 1
+        print(f"Sistema inicializado: {self.NB} buckets (NB), "f"capacidade {self.FR} (FR).")
+        print(f"Tempo de construção do índice: "f"{(tempo_final - tempo_inicial):.4f} segundos")
 
-    def _validate_NB(self, num: int):
-        if num < 1: raise ValueError("NB deve ser no mínimo 1")
-        return num
+    def _validar_frequencia_registros(self, numero: int):
+        return numero or 1
 
-    def _dinamic_bucket(self, NB: int, FR: int):
-        bucket = [None] * NB
-        for i in range(NB):
-             bucket[i] = [[None, -1] for _ in range(FR)]
+    def _validar_numero_buckets(self, numero: int):
+        if numero < 1:
+            raise ValueError("NB deve ser no mínimo 1")
+        return numero
+
+    def _criar_bucket_dinamico(self, quantidade_buckets: int, capacidade: int):
+        bucket = [None] * quantidade_buckets
+
+        for indice in range(quantidade_buckets):
+            bucket[indice] = [
+                [None, -1] for _ in range(capacidade)
+            ]
+
         return bucket
 
-    def _build_index_from_pages(self, datas: list[str], datas_per_page: int):
-        total_pages = math.ceil(self.NR / datas_per_page)
+    def _construir_indice_por_paginas(self, dados: Tabela):
+        total_paginas = dados.qtd_paginas
 
-        for page_id in range(total_pages):
-            start_idx = page_id * datas_per_page
-            end_idx = start_idx + datas_per_page
-            page_records = datas[start_idx : end_idx]
+        for numero_pagina in range(total_paginas):
+            registros_pagina = dados.ler_pagina(numero_pagina)
 
-            for data in page_records:
-                self.insert(data, page_id)
+            for registro in registros_pagina:
+                print(registro)
+                self.inserir(registro, numero_pagina)
 
-    def insert(self, value: str, page_id: int):
-        key = self.hash(value) 
-        bucket_pos = self.next_free_pos[key] 
+    def inserir(self, valor: str, identificador_pagina: int):
+        chave = self.funcao_hash(valor)
+        posicao_bucket = self.proxima_posicao_livre[chave]
 
-        if bucket_pos < self.FR: 
-            self.bucket[key][bucket_pos][0] = value 
-            self.bucket[key][bucket_pos][1] = page_id 
-            self.next_free_pos[key] += 1 
-            self.SIZE += 1 
-            return True 
+        if posicao_bucket < self.FR:
+            self.bucket[chave][posicao_bucket][0] = valor
+            self.bucket[chave][posicao_bucket][1] = identificador_pagina
+            self.proxima_posicao_livre[chave] += 1
+            self.TAMANHO += 1
+            return True
 
-
-        self.overflow[key].append([value, page_id])
+        self.overflow[chave].append([valor, identificador_pagina])
         self.total_colisoes += 1
-        self.total_overflow += 1 
-        self.buckets_em_overflow.add(key) 
-        return True 
+        self.total_overflow += 1
+        self.buckets_em_overflow.add(chave)
 
-    def search(self, value: str):
-        key = self.hash(value)
+        return True
 
-        for bucket_pos in range(self.next_free_pos[key]):
-            if self.bucket[key][bucket_pos][0] == value:
-                return self.bucket[key][bucket_pos]
+    def buscar(self, valor: str):
+        chave = self.funcao_hash(valor)
 
-        for entrada in self.overflow[key]:
-            if entrada[0] == value:
+        for posicao_bucket in range(self.proxima_posicao_livre[chave]):
+            if self.bucket[chave][posicao_bucket][0] == valor:
+                return self.bucket[chave][posicao_bucket]
+
+        for entrada in self.overflow[chave]:
+            if entrada[0] == valor:
                 return entrada
 
         return None
 
-    def hash(self, value: str):
-        hash_val = 5381
-        for char in value:
-            hash_val *= 33 + ord(char) 
-        return hash_val % self.NB
+    def funcao_hash(self, valor: str):
+        valor_hash = 5381
+
+        for caractere in valor:
+            valor_hash *= 33 + ord(caractere)
+
+        return valor_hash % self.NB
