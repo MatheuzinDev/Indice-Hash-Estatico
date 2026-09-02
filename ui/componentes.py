@@ -4,6 +4,10 @@ from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QLabel, QListWidget, QVBox
 from core.armazenamento import Tabela
 
 REGISTROS_EXIBIDOS = 5
+LARGURA_CAIXA_PAGINA = 220
+COR_DESTAQUE = "#1565c0"
+ESTILO_DESTAQUE = f"QGroupBox {{ border: 2px solid {COR_DESTAQUE}; border-radius: 4px; }}"
+AVISO_SEM_SCAN = "Execute um table scan para ver os registros lidos."
 
 
 class VisualizadorPaginas(QGroupBox):
@@ -12,6 +16,7 @@ class VisualizadorPaginas(QGroupBox):
         super().__init__("Páginas", parent)
 
         self._caixa_primeira, self._titulo_primeira, self._registros_primeira = self._montar_caixa()
+        self._caixa_destacada, self._titulo_destacada, self._registros_destacada = self._montar_caixa()
         self._caixa_ultima, self._titulo_ultima, self._registros_ultima = self._montar_caixa()
 
         self._aviso = QLabel("Carregue um arquivo para ver as páginas.")
@@ -19,6 +24,7 @@ class VisualizadorPaginas(QGroupBox):
         layout = QHBoxLayout(self)
         layout.addWidget(self._aviso)
         layout.addWidget(self._caixa_primeira)
+        layout.addWidget(self._caixa_destacada)
         layout.addWidget(self._caixa_ultima)
         layout.addStretch()
 
@@ -31,6 +37,7 @@ class VisualizadorPaginas(QGroupBox):
         registros.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
 
         caixa = QGroupBox()
+        caixa.setMaximumWidth(LARGURA_CAIXA_PAGINA)
         layout = QVBoxLayout(caixa)
         layout.addWidget(titulo)
         layout.addWidget(registros)
@@ -38,7 +45,7 @@ class VisualizadorPaginas(QGroupBox):
 
         return caixa, titulo, registros
 
-    def mostrar(self, tabela: Tabela) -> None:
+    def mostrar(self, tabela: Tabela, pagina_destacada: int | None = None) -> None:
         ultima = tabela.qtd_paginas - 1
 
         self._preencher(self._titulo_primeira, self._registros_primeira, tabela, 0)
@@ -48,6 +55,17 @@ class VisualizadorPaginas(QGroupBox):
         self._caixa_primeira.show()
         self._caixa_ultima.setVisible(ultima > 0)
 
+        self._destacar(self._caixa_primeira, pagina_destacada == 0)
+        self._destacar(self._caixa_ultima, pagina_destacada == ultima and ultima > 0)
+
+        do_meio = pagina_destacada is not None and 0 < pagina_destacada < ultima
+        if do_meio:
+            self._preencher(
+                self._titulo_destacada, self._registros_destacada, tabela, pagina_destacada
+            )
+        self._caixa_destacada.setVisible(do_meio)
+        self._destacar(self._caixa_destacada, do_meio)
+
     def _preencher(self, titulo: QLabel, registros: QLabel, tabela: Tabela, num_pagina: int) -> None:
         pagina = tabela.ler_pagina(num_pagina)
         exibidos = pagina[:REGISTROS_EXIBIDOS]
@@ -55,13 +73,14 @@ class VisualizadorPaginas(QGroupBox):
         titulo.setText(f"<b>Página {num_pagina}</b> — {len(pagina)} registros")
         registros.setText("\n".join(exibidos))
 
+    def _destacar(self, caixa: QGroupBox, ativo: bool) -> None:
+        caixa.setStyleSheet(ESTILO_DESTAQUE if ativo else "")
+
     def limpar(self) -> None:
         self._caixa_primeira.hide()
+        self._caixa_destacada.hide()
         self._caixa_ultima.hide()
         self._aviso.show()
-
-
-AVISO_SEM_SCAN = "Execute um table scan para ver os registros lidos."
 
 
 class RegistrosLidos(QGroupBox):
