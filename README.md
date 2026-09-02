@@ -61,17 +61,20 @@ projeto-banco-dados-av1/
 ├── main.py                      # ponto de entrada
 ├── core/                        # lógica pura — não importa PySide6
 │   ├── erros.py                 # exceções e mensagens de erro
-│   ├── funcao_hash.py           # função hash FNV-1a e cálculo de NB
-│   ├── armazenamento.py         # tabela, paginação e contador de acessos
-│   ├── indice.py                # Bucket, overflow e construção do índice
-│   ├── busca.py                 # busca indexada e table scan
-│   └── metricas.py              # estatísticas e comparativos
+│   ├── armazenamento.py         # carga do arquivo, validação e paginação (Tabela)
+│   ├── hashing.py               # função hash, buckets, overflow e construção do índice
+│   └── busca.py                 # busca indexada e table scan
 ├── ui/                          # interface gráfica
 │   ├── janela_principal.py
 │   ├── paineis.py
 │   └── componentes.py
 └── data/words.txt               # base de dados (466.550 registros)
 ```
+
+> **Estado em 02/09/2026.** `core/hashing.py` e `core/busca.py` ainda não são usados pela interface —
+> a janela hoje carrega o arquivo, divide em páginas e mostra a primeira e a última. O módulo de
+> métricas (`core/metricas.py`) ainda não existe. O plano de integração está na documentação interna
+> da equipe.
 
 **Regra de separação:** nada em `core/` importa PySide6. Isso mantém o núcleo testável por script
 e a explicação do código na apresentação organizada.
