@@ -18,7 +18,7 @@ from core.busca import (
 from core.erros import ErroIndice
 from core.hashing import IndiceHashEstatico
 from core.metricas import EstatisticasIndice, comparar
-from ui.componentes import RegistrosLidos, VisualizadorPaginas
+from ui.componentes import GradeBuckets, RegistrosLidos, VisualizadorPaginas
 from ui.paineis import PainelBusca, PainelComparativo, PainelConfiguracao, PainelMetricas
 
 COR_ERRO = "#b00020"
@@ -30,7 +30,7 @@ class JanelaPrincipal(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Índice Hash Estático")
-        self.resize(1120, 700)
+        self.resize(1200, 720)
 
         self.palavras: list[str] = []
         self.tamanho_pagina: int | None = None
@@ -56,6 +56,7 @@ class JanelaPrincipal(QMainWindow):
         self.painel_metricas = PainelMetricas()
         self.painel_comparativo = PainelComparativo()
         self._visualizador = VisualizadorPaginas()
+        self._grade_buckets = GradeBuckets()
         self._registros_lidos = RegistrosLidos()
         self._status = QLabel("Selecione um arquivo de palavras para começar.")
         self._status.setWordWrap(True)
@@ -68,7 +69,7 @@ class JanelaPrincipal(QMainWindow):
         coluna_direita = QVBoxLayout()
         coluna_direita.addWidget(self.painel_busca)
         coluna_direita.addWidget(self.painel_comparativo)
-        coluna_direita.addStretch()
+        coluna_direita.addWidget(self._registros_lidos, stretch=1)
 
         topo = QHBoxLayout()
         topo.addLayout(coluna_esquerda, stretch=1)
@@ -76,7 +77,7 @@ class JanelaPrincipal(QMainWindow):
 
         base = QHBoxLayout()
         base.addWidget(self._visualizador, stretch=1)
-        base.addWidget(self._registros_lidos, stretch=1)
+        base.addWidget(self._grade_buckets, stretch=1)
 
         central = QWidget()
         layout = QVBoxLayout(central)
@@ -118,6 +119,7 @@ class JanelaPrincipal(QMainWindow):
             QApplication.restoreOverrideCursor()
 
         self.painel_metricas.definir_indice(EstatisticasIndice(self.indice))
+        self._grade_buckets.mostrar(self.indice)
         self.painel_busca.definir_disponibilidade(True, True)
         self._mostrar_status("Índice construído.")
 
@@ -126,6 +128,8 @@ class JanelaPrincipal(QMainWindow):
             self.indice, PaginasDaTabela(self.tabela), chave
         )
         self.painel_comparativo.definir_indice(self.resultado_indice)
+        self._grade_buckets.destacar(self.indice.funcao_hash(chave))
+        self._visualizador.mostrar(self.tabela, self.resultado_indice.pagina)
         self._atualizar_ganho()
 
         if self.resultado_indice.encontrada:
@@ -182,6 +186,7 @@ class JanelaPrincipal(QMainWindow):
     def _invalidar_indice(self) -> None:
         self.indice = None
         self.painel_metricas.limpar_indice()
+        self._grade_buckets.limpar()
         self._limpar_busca()
 
     def _limpar_busca(self) -> None:
@@ -189,6 +194,10 @@ class JanelaPrincipal(QMainWindow):
         self.resultado_scan = None
         self.painel_comparativo.limpar()
         self._registros_lidos.limpar()
+        self._grade_buckets.limpar_destaque()
+
+        if self.tabela is not None:
+            self._visualizador.mostrar(self.tabela)
 
     def _mostrar_status(self, mensagem: str) -> None:
         self._status.setText(mensagem)
