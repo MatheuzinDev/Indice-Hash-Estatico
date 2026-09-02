@@ -1,6 +1,7 @@
 import math
 import time
 from core.armazenamento import Tabela
+from core.erros import NumeroBucketsInsuficiente
 
 class IndiceHashEstatico:
     def __init__(self, dados: Tabela):
@@ -29,8 +30,9 @@ class IndiceHashEstatico:
         return numero or 1
 
     def _validar_numero_buckets(self, numero: int):
-        if numero < 1:
-            raise ValueError("NB deve ser no mínimo 1")
+        minimo = self.NR / self.FR
+        if numero <= minimo:
+            raise NumeroBucketsInsuficiente(numero, minimo)
         return numero
 
     def _criar_bucket_dinamico(self, quantidade_buckets: int, capacidade: int):

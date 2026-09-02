@@ -28,3 +28,12 @@ class TamanhoPaginaNaoNumerico(ErroTamanhoPagina):
 class TamanhoPaginaInvalido(ErroTamanhoPagina):
     def __init__(self, tamanho: int):
         super().__init__(f"O tamanho da página deve ser maior que zero, mas veio {tamanho}.")
+
+
+class ErroIndice(Exception):
+    pass
+
+
+class NumeroBucketsInsuficiente(ErroIndice):
+    def __init__(self, nb: int, minimo: float):
+        super().__init__(f"NB ({nb}) deve ser maior que NR/FR ({minimo:.1f}).")
