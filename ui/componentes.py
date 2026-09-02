@@ -1,10 +1,11 @@
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QStringListModel, Qt
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QGroupBox,
     QHBoxLayout,
     QLabel,
+    QListView,
     QListWidget,
     QPushButton,
     QScrollArea,
@@ -16,7 +17,6 @@ from PySide6.QtWidgets import (
 from core.armazenamento import Tabela
 from core.hashing import IndiceHashEstatico
 
-REGISTROS_EXIBIDOS = 5
 LARGURA_CAIXA_PAGINA = 220
 ALTURA_DETALHE = 170
 FAIXA = 500
@@ -49,18 +49,18 @@ class VisualizadorPaginas(QGroupBox):
 
         self.limpar()
 
-    def _montar_caixa(self) -> tuple[QGroupBox, QLabel, QLabel]:
+    def _montar_caixa(self) -> tuple[QGroupBox, QLabel, QListView]:
         titulo = QLabel()
-        registros = QLabel()
-        registros.setAlignment(Qt.AlignmentFlag.AlignTop)
-        registros.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+
+        registros = QListView()
+        registros.setUniformItemSizes(True)
+        registros.setModel(QStringListModel())
 
         caixa = QGroupBox()
         caixa.setMaximumWidth(LARGURA_CAIXA_PAGINA)
         layout = QVBoxLayout(caixa)
         layout.addWidget(titulo)
-        layout.addWidget(registros)
-        layout.addStretch()
+        layout.addWidget(registros, stretch=1)
 
         return caixa, titulo, registros
 
@@ -85,12 +85,11 @@ class VisualizadorPaginas(QGroupBox):
         self._caixa_destacada.setVisible(do_meio)
         self._destacar(self._caixa_destacada, do_meio)
 
-    def _preencher(self, titulo: QLabel, registros: QLabel, tabela: Tabela, num_pagina: int) -> None:
+    def _preencher(self, titulo: QLabel, registros: QListView, tabela: Tabela, num_pagina: int) -> None:
         pagina = tabela.ler_pagina(num_pagina)
-        exibidos = pagina[:REGISTROS_EXIBIDOS]
 
         titulo.setText(f"<b>Página {num_pagina}</b> — {len(pagina)} registros")
-        registros.setText("\n".join(exibidos))
+        registros.model().setStringList(pagina)
 
     def _destacar(self, caixa: QGroupBox, ativo: bool) -> None:
         caixa.setStyleSheet(ESTILO_DESTAQUE if ativo else "")
