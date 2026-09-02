@@ -1,5 +1,5 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QLabel, QVBoxLayout
+from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QLabel, QListWidget, QVBoxLayout
 
 from core.armazenamento import Tabela
 
@@ -59,3 +59,34 @@ class VisualizadorPaginas(QGroupBox):
         self._caixa_primeira.hide()
         self._caixa_ultima.hide()
         self._aviso.show()
+
+
+AVISO_SEM_SCAN = "Execute um table scan para ver os registros lidos."
+
+
+class RegistrosLidos(QGroupBox):
+
+    def __init__(self, parent=None):
+        super().__init__("Registros lidos", parent)
+
+        self._resumo = QLabel(AVISO_SEM_SCAN)
+        self._resumo.setWordWrap(True)
+        self._lista = QListWidget()
+
+        layout = QVBoxLayout(self)
+        layout.addWidget(self._resumo)
+        layout.addWidget(self._lista, stretch=1)
+
+    def mostrar(self, registros: list[str], total: int) -> None:
+        self._lista.clear()
+        self._lista.addItems(registros)
+
+        total_formatado = f"{total:,}".replace(",", ".")
+        if len(registros) < total:
+            self._resumo.setText(f"Últimos {len(registros)} dos {total_formatado} registros lidos")
+        else:
+            self._resumo.setText(f"{total_formatado} registros lidos")
+
+    def limpar(self) -> None:
+        self._lista.clear()
+        self._resumo.setText(AVISO_SEM_SCAN)
