@@ -56,3 +56,18 @@ class Tabela:
     def ler_pagina(self, num_pagina: int) -> list[str]:
         inicio = num_pagina * self.tamanho_pagina
         return self.palavras[inicio : inicio + self.tamanho_pagina]
+
+
+class PaginasDaTabela:
+    def __init__(self, tabela: Tabela):
+        self.tabela = tabela
+
+    def __len__(self) -> int:
+        return self.tabela.qtd_paginas
+
+    def __getitem__(self, num_pagina: int) -> list[str]:
+        return self.tabela.ler_pagina(num_pagina)
+
+    def __iter__(self):
+        for num_pagina in range(len(self)):
+            yield self[num_pagina]
