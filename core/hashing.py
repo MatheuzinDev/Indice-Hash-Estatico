@@ -4,7 +4,7 @@ from core.armazenamento import Tabela
 
 class IndiceHashEstatico:
     def __init__(self, dados: Tabela):
-        tempo_inicial = time.time()
+        tempo_inicial = time.perf_counter()
 
         self.NR = len(dados.palavras)
         self.TAMANHO = 0
@@ -23,10 +23,7 @@ class IndiceHashEstatico:
 
         self._construir_indice_por_paginas(dados)
 
-        tempo_final = time.time()
-
-        print(f"Sistema inicializado: {self.NB} buckets (NB), "f"capacidade {self.FR} (FR).")
-        print(f"Tempo de construção do índice: "f"{(tempo_final - tempo_inicial):.4f} segundos")
+        self.tempo_construcao = time.perf_counter() - tempo_inicial
 
     def _validar_frequencia_registros(self, numero: int):
         return numero or 1
