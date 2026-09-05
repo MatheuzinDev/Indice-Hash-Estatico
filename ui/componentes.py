@@ -4,6 +4,7 @@ from PySide6.QtWidgets import (
     QAbstractItemView,
     QGroupBox,
     QHBoxLayout,
+    QHeaderView,
     QLabel,
     QListView,
     QListWidget,
@@ -116,7 +117,9 @@ class GradeBuckets(QGroupBox):
         self._tabela.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self._tabela.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self._tabela.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        self._tabela.setMaximumWidth(300)
+        self._tabela.setMinimumWidth(360)
+        self._tabela.setMaximumWidth(360)
+        self._tabela.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self._tabela.itemSelectionChanged.connect(self._ao_selecionar)
 
         self._anterior = QPushButton("◀")
