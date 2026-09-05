@@ -86,6 +86,6 @@ class IndiceHashEstatico:
         valor_hash = 5381
 
         for caractere in valor:
-            valor_hash *= 33 + ord(caractere)
+            valor_hash = valor_hash * 33 + ord(caractere)
 
         return valor_hash % self.NB
